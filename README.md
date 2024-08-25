@@ -1,30 +1,29 @@
+Certainly! Below is a `README.md` file with clearly defined headings, descriptions, and code snippets separated for clarity.
+
+---
+
 # Library Management System - SQL Project (P2)
 
-## Project Overview
+## Overview
 
-**Project Title**: Library Management System  
-**Level**: Intermediate  
-**Database**: `library_db`
-
-This project demonstrates the development of a Library Management System using SQL. It encompasses creating and managing tables, performing CRUD operations, and executing advanced SQL queries. The purpose of this project is to highlight database design, manipulation, and querying skills.
+The Library Management System project is designed to demonstrate the implementation of a database system that manages a library's operations. This project covers database creation, CRUD operations, advanced SQL queries, and data analysis, providing a comprehensive understanding of SQL in a real-world scenario.
 
 ## Project Goals
 
-- **Database Setup**: Design and populate the `library_db` with tables for branches, employees, members, books, and tracking the issued and returned status of books.
-- **CRUD Operations**: Implement Create, Read, Update, and Delete operations on the records.
-- **CTAS (Create Table As Select)**: Generate new tables from query results using CTAS.
-- **Advanced SQL Queries**: Execute complex queries to extract and analyze specific data.
+1. **Database Setup**: Design and populate the `library_db` with relevant tables.
+2. **CRUD Operations**: Implement Create, Read, Update, and Delete operations.
+3. **CTAS (Create Table As Select)**: Generate new tables based on existing data.
+4. **Advanced SQL Queries**: Execute complex queries to retrieve and analyze data.
 
-## Project Structure
+## Database Setup
 
-### 1. Database Setup
-
-- **Database Creation**: Initialize the database and define its structure.
+The following SQL scripts create the database and tables required for the Library Management System.
 
 ```sql
+-- Create the library_db database
 CREATE DATABASE library_db;
 
--- Create table "Branch"
+-- Create Branch table
 DROP TABLE IF EXISTS branch;
 CREATE TABLE branch (
     branch_id VARCHAR(10) PRIMARY KEY,
@@ -33,7 +32,7 @@ CREATE TABLE branch (
     contact_no VARCHAR(15)
 );
 
--- Create table "Employee"
+-- Create Employee table
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
     emp_id VARCHAR(10) PRIMARY KEY,
@@ -44,7 +43,7 @@ CREATE TABLE employees (
     FOREIGN KEY (branch_id) REFERENCES branch(branch_id)
 );
 
--- Create table "Members"
+-- Create Members table
 DROP TABLE IF EXISTS members;
 CREATE TABLE members (
     member_id VARCHAR(10) PRIMARY KEY,
@@ -53,7 +52,7 @@ CREATE TABLE members (
     reg_date DATE
 );
 
--- Create table "Books"
+-- Create Books table
 DROP TABLE IF EXISTS books;
 CREATE TABLE books (
     isbn VARCHAR(50) PRIMARY KEY,
@@ -65,7 +64,7 @@ CREATE TABLE books (
     publisher VARCHAR(30)
 );
 
--- Create table "IssueStatus"
+-- Create IssueStatus table
 DROP TABLE IF EXISTS issued_status;
 CREATE TABLE issued_status (
     issued_id VARCHAR(10) PRIMARY KEY,
@@ -79,7 +78,7 @@ CREATE TABLE issued_status (
     FOREIGN KEY (issued_book_isbn) REFERENCES books(isbn)
 );
 
--- Create table "ReturnStatus"
+-- Create ReturnStatus table
 DROP TABLE IF EXISTS return_status;
 CREATE TABLE return_status (
     return_id VARCHAR(10) PRIMARY KEY,
@@ -89,62 +88,82 @@ CREATE TABLE return_status (
     return_book_isbn VARCHAR(50),
     FOREIGN KEY (return_book_isbn) REFERENCES books(isbn)
 );
-2. CRUD Operations
-Create: Insert new records into the tables.
-Read: Fetch data from the tables.
-Update: Modify existing records.
-Delete: Remove records from the tables.
-Examples:
-Task 1: Insert a new book record into the books table.
-sql
-Copy code
+```
+
+## CRUD Operations
+
+This section covers basic CRUD (Create, Read, Update, Delete) operations to manage the records in the Library Management System.
+
+### Insert a New Book
+
+```sql
 INSERT INTO books(isbn, book_title, category, rental_price, status, author, publisher)
 VALUES('978-1-60129-456-2', 'To Kill a Mockingbird', 'Classic', 6.00, 'yes', 'Harper Lee', 'J.B. Lippincott & Co.');
 SELECT * FROM books;
-Task 2: Update an existing member's address.
-sql
-Copy code
+```
+
+### Update a Member's Address
+
+```sql
 UPDATE members
 SET member_address = '125 Oak St'
 WHERE member_id = 'C103';
-Task 3: Delete a record from the issued_status table.
-sql
-Copy code
+```
+
+### Delete a Record from Issued Status
+
+```sql
 DELETE FROM issued_status
 WHERE issued_id = 'IS121';
-Task 4: Retrieve all books issued by a specific employee.
-sql
-Copy code
+```
+
+### Retrieve Books Issued by a Specific Employee
+
+```sql
 SELECT * FROM issued_status
 WHERE issued_emp_id = 'E101';
-Task 5: List members who have issued more than one book.
-sql
-Copy code
+```
+
+### List Members Who Have Issued More Than One Book
+
+```sql
 SELECT
     issued_emp_id,
     COUNT(*)
 FROM issued_status
 GROUP BY 1
 HAVING COUNT(*) > 1;
-3. CTAS (Create Table As Select)
-Task 6: Create summary tables using CTAS to count issued books per title.
-sql
-Copy code
+```
+
+## CTAS (Create Table As Select)
+
+The CTAS operation allows for the creation of new tables based on existing query results.
+
+### Create a Summary Table of Issued Books
+
+```sql
 CREATE TABLE book_issued_cnt AS
 SELECT b.isbn, b.book_title, COUNT(ist.issued_id) AS issue_count
 FROM issued_status as ist
 JOIN books as b
 ON ist.issued_book_isbn = b.isbn
 GROUP BY b.isbn, b.book_title;
-4. Data Analysis & Findings
-Task 7: Retrieve all books in a specific category.
-sql
-Copy code
+```
+
+## Data Analysis & Queries
+
+This section includes advanced SQL queries to analyze the library's data.
+
+### Retrieve Books in a Specific Category
+
+```sql
 SELECT * FROM books
 WHERE category = 'Classic';
-Task 8: Calculate total rental income by category.
-sql
-Copy code
+```
+
+### Calculate Total Rental Income by Category
+
+```sql
 SELECT 
     b.category,
     SUM(b.rental_price),
@@ -156,14 +175,18 @@ JOIN
 ON 
     b.isbn = ist.issued_book_isbn
 GROUP BY 1;
-Task 9: List members who registered within the last 180 days.
-sql
-Copy code
+```
+
+### List Members Registered in the Last 180 Days
+
+```sql
 SELECT * FROM members
 WHERE reg_date >= CURRENT_DATE - INTERVAL '180 days';
-Task 10: Display employees with their branch manager's name and branch details.
-sql
-Copy code
+```
+
+### Display Employees with Branch Manager and Branch Details
+
+```sql
 SELECT 
     e1.emp_id,
     e1.emp_name,
@@ -180,15 +203,19 @@ JOIN
     employees as e2
 ON 
     e2.emp_id = b.manager_id;
-Task 11: Create a table of books with rental price above a certain threshold.
-sql
-Copy code
+```
+
+### Create a Table of Expensive Books
+
+```sql
 CREATE TABLE expensive_books AS
 SELECT * FROM books
 WHERE rental_price > 7.00;
-Task 12: Retrieve the list of books not yet returned.
-sql
-Copy code
+```
+
+### Retrieve List of Books Not Yet Returned
+
+```sql
 SELECT * FROM issued_status as ist
 LEFT JOIN
     return_status as rs
@@ -196,10 +223,15 @@ ON
     rs.issued_id = ist.issued_id
 WHERE 
     rs.return_id IS NULL;
-5. Advanced SQL Operations
-Task 13: Identify members with overdue books.
-sql
-Copy code
+```
+
+## Advanced SQL Operations
+
+Advanced SQL operations include more complex procedures, reports, and analysis.
+
+### Identify Members with Overdue Books
+
+```sql
 SELECT 
     ist.issued_member_id,
     m.member_name,
@@ -225,9 +257,11 @@ WHERE
     AND
     (CURRENT_DATE - ist.issued_date) > 30
 ORDER BY 1;
-Task 14: Update book status on return.
-sql
-Copy code
+```
+
+### Update Book Status on Return
+
+```sql
 CREATE OR REPLACE PROCEDURE add_return_records(p_return_id VARCHAR(10), p_issued_id VARCHAR(10), p_book_quality VARCHAR(10))
 LANGUAGE plpgsql
 AS $$
@@ -250,9 +284,11 @@ BEGIN
     RAISE NOTICE 'Thank you for returning the book: %', v_book_name;
 END;
 $$;
-Task 15: Generate a branch performance report.
-sql
-Copy code
+```
+
+### Generate a Branch Performance Report
+
+```sql
 CREATE TABLE branch_reports
 AS
 SELECT 
@@ -280,17 +316,21 @@ JOIN
 ON 
     ist.issued_book_isbn = bk.isbn
 GROUP BY 1, 2;
-Task 16: Create a table of active members using CTAS.
-sql
-Copy code
+```
+
+### Create a Table of Active Members
+
+```sql
 CREATE TABLE active_members
 AS
 SELECT * FROM members
 WHERE member_id IN (SELECT DISTINCT issued_member_id FROM issued_status
                     WHERE issued_date >= CURRENT_DATE - INTERVAL '2 month');
-Task 17: Find employees with the most book issues processed.
-sql
-Copy code
+```
+
+### Find Employees with the Most Book Issues Processed
+
+```sql
 SELECT 
     e.emp_name,
     b.*,
@@ -307,9 +347,11 @@ ON
     b.branch_id = e.branch_id
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
 ORDER BY 6 DESC;
-Task 18: Identify members frequently issuing damaged books.
-sql
-Copy code
+```
+
+### Identify Members Frequently Issuing Damaged Books
+
+```sql
 CREATE TABLE frequent_damaged_book_issue AS
 SELECT 
     rs.return_book_name,
@@ -320,14 +362,18 @@ FROM
 JOIN 
     return_status as rs
 ON 
-    ist.issued_id = rs.issued_id
+    ist.issued_id
+
+ = rs.issued_id
 WHERE 
     rs.book_quality = 'damaged'
 GROUP BY 1, 2
 HAVING COUNT(*) >= 2;
-Task 19: Write a stored procedure to manage book issuance.
-sql
-Copy code
+```
+
+### Write a Stored Procedure to Manage Book Issuance
+
+```sql
 CREATE OR REPLACE PROCEDURE add_issue_records(p_issued_id VARCHAR(10), p_emp_id VARCHAR(10), p_member_id VARCHAR(10), p_isbn VARCHAR(50))
 LANGUAGE plpgsql
 AS $$
@@ -345,9 +391,11 @@ BEGIN
     RAISE NOTICE 'Book issued successfully. Book: %', v_book_title;
 END;
 $$;
-Task 20: Generate a table of overdue books with fines.
-sql
-Copy code
+```
+
+### Generate a Table of Overdue Books with Fines
+
+```sql
 CREATE TABLE overdue_books_with_fines
 AS
 SELECT 
@@ -374,9 +422,18 @@ WHERE
     rs.return_date IS NULL
     AND
     (CURRENT_DATE - ist.issued_date) > 30;
-Reports
-Database Schema: Documentation of table structures and relationships.
-Data Analysis: Insight into various aspects, such as book categories, employee details, and membership trends.
-Summary Reports: Aggregated data on popular books and employee performance.
-Conclusion
-This project is a comprehensive demonstration of SQL capabilities in building and managing a library management system. It covers database setup, CRUD operations, advanced SQL queries, and data analysis, providing a strong foundation for database management and querying skills.
+```
+
+## Reports
+
+- **Database Schema**: Documentation of table structures and relationships.
+- **Data Analysis**: Insight into various aspects, such as book categories, employee details, and membership trends.
+- **Summary Reports**: Aggregated data on popular books and employee performance.
+
+## Conclusion
+
+This project showcases the application of SQL in managing and analyzing a library's database. It provides a comprehensive guide to setting up, maintaining, and extracting valuable insights from the system.
+
+---
+
+This `README.md` provides a detailed guide to the Library Management System SQL project, making it easier for users to understand the project structure and execute the code provided.
