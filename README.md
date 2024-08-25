@@ -1,7 +1,3 @@
-Certainly! Below is a `README.md` file with clearly defined headings, descriptions, and code snippets separated for clarity.
-
----
-
 # Library Management System - SQL Project (P2)
 
 ## Overview
@@ -435,5 +431,3 @@ WHERE
 This project showcases the application of SQL in managing and analyzing a library's database. It provides a comprehensive guide to setting up, maintaining, and extracting valuable insights from the system.
 
 ---
-
-This `README.md` provides a detailed guide to the Library Management System SQL project, making it easier for users to understand the project structure and execute the code provided.
